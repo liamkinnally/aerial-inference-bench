@@ -4,7 +4,7 @@ An aerial object-detection study comparing inference speed, accuracy, model size
 
 **ONNX FP32 at 960 × 960 achieved 0.213 validation mAP50–95 at 22.2 ms mean prediction latency, compared with 0.169 at 22.9 ms for PyTorch FP32 at 640 × 640.** The larger input improved accuracy while keeping the observed mean latency close to the smaller PyTorch configuration on this machine.
 
-[Results](docs/measurements/benchmarks.csv) · [Methodology](docs/METHODOLOGY.md) · [Reproduce](docs/REPRODUCE.md) · [Decisions](DECISIONS.md)
+[Results](docs/measurements/benchmarks.csv) · [Methodology](docs/METHODOLOGY.md) · [Reproduce](docs/REPRODUCE.md)
 
 ![Stock COCO model on the left and VisDrone fine-tuned model on the right, on the same saved drone frame.](docs/assets/before-after.png)
 
@@ -35,13 +35,13 @@ AP values are fractions; higher is better. Latency is the full prediction call; 
 
 ![Mean full-call latency on the Apple M4 Pro CPU versus VisDrone validation mAP50–95, with every format and input size labelled.](docs/assets/speed-vs-accuracy.png)
 
-At 640, ONNX FP32 measured 10.9 ms against PyTorch's 22.9 ms, with matching validation accuracy to the reported precision. The lower latency made room for a larger input: ONNX at 960 improved mAP50–95 from 0.169 to 0.213 while staying close to the mean latency of PyTorch at 640. These are observed timings on this CPU; the comparison does not establish statistical equivalence or equal tail latency.
+At 640, ONNX FP32 measured 10.9 ms against PyTorch's 22.9 ms, with matching validation accuracy to the reported precision. Increasing the ONNX input to 960 raised mean latency to 22.2 ms and mAP50–95 from 0.169 to 0.213. Pedestrian AP50–95 rose from 0.137 to 0.199. The mean at 960 was close to PyTorch's mean at 640 on this CPU. The comparison does not establish statistical equivalence or equal tail latency.
 
 ## File size versus accuracy
 
 ![Serialized model size in decimal MB versus VisDrone validation mAP50–95, with every format and input size labelled.](docs/assets/file-size-vs-accuracy.png)
 
-At 640, INT8 reduced the ONNX file size by 69.1%, while mAP50–95 fell from 0.169 to 0.153. INT8 was slower than ONNX FP32 in both input-size groups on this CPU. In this experiment, quantization offered a size tradeoff rather than a latency improvement.
+I expected INT8 to run faster. At 640, it reduced the ONNX file from 9.861 MB to 3.045 MB (69.1%), but mean latency rose from 10.9 to 12.2 ms and mAP50–95 fell from 0.169 to 0.153. ONNX FP32 was also faster at 960 on this CPU.
 
 The size comparison uses the two ONNX formats. The PyTorch checkpoint has a different storage representation; see the [precision and file-size notes](docs/METHODOLOGY.md#precision-and-file-size).
 
@@ -61,15 +61,11 @@ See the [payload methodology](docs/METHODOLOGY.md#payload-calculations) and [sav
 
 ## Scope and next steps
 
-This is a laptop benchmark. Target-device latency, sustained heat, power and memory use, and an actual camera/radio pipeline remain unmeasured. Accuracy uses Ultralytics on converted VisDrone labels; it is not an official challenge score. The repeated-image timings do not establish performance across varied scenes or a complete video pipeline.
+The first follow-up is to repeat the timings on varied images. The current timings use one frame, and crowded scenes could take a different amount of time to process. I would also evaluate with the official VisDrone toolkit to make the accuracy figures easier to compare across studies. The current scores use Ultralytics on converted VisDrone labels.
 
-The [methodology](docs/METHODOLOGY.md) records the thread behavior, NMS mode, percentile convention and other measurement details. Follow-up experiments include NMS-free inference, training at the larger image size, trying a larger model, and testing the intended runtime, camera and link on target hardware. The [decisions log](DECISIONS.md) explains the choices and follow-ups.
+I would then train at 960, try a model larger than nano to see whether the gain in accuracy is worth the added latency, and time inference without external non-maximum suppression.
 
-## Development
-
-I developed the experiment plan with Claude, wrote the timing loop from a proposed skeleton with review, and wrote the original bandwidth comparison math and decisions log.
-
-Claude supplied the bandwidth frame loop and message format. Codex implemented the training, export, validation and reporting pipeline, supporting wrappers, the MP4 comparison, tests, charts and documentation.
+Deployment measurements would need the intended hardware and footage from its camera. Accuracy on VisDrone may differ from what the same detector achieves in that environment. On a supported NVIDIA device, I would compare runtimes including TensorRT and their quantization options, then measure sustained latency, heat, power, memory and end-to-end camera-to-link behavior. Those measurements are still open.
 
 ## Licensing
 
