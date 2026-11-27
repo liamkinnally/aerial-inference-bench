@@ -73,6 +73,6 @@ This repository's code is licensed under the GNU Affero General Public License v
 
 Ultralytics is also distributed under [AGPL-3.0](https://github.com/ultralytics/ultralytics/blob/main/LICENSE) and offers a separate [Enterprise License](https://www.ultralytics.com/license). The repository's code license does not change the separate dataset and footage terms below.
 
-VisDrone is a research dataset. As recorded in [data/SOURCES.md](data/SOURCES.md), the linked upstream README did not include a standalone license grant. Dataset images, annotations and model weights are not included in this repository. Review the upstream terms before reuse or redistribution.
+VisDrone is a research dataset. As recorded in [data/SOURCES.md](data/SOURCES.md), the linked upstream README did not include a standalone license grant. Dataset images, annotations and model weights are not included in this repository.
 
 The separate ConnectHV demo footage is CC0, as documented in [data/SOURCES.md](data/SOURCES.md). That statement does not apply to VisDrone.
