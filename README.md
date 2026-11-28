@@ -2,7 +2,7 @@
 
 An aerial object-detection study comparing inference speed, accuracy, model size and detection-message payloads on an Apple M4 Pro CPU.
 
-**ONNX FP32 at 960 × 960 achieved 0.213 validation mAP50–95 at 22.2 ms mean prediction latency, compared with 0.169 at 22.9 ms for PyTorch FP32 at 640 × 640.** The larger input improved accuracy while keeping the observed mean latency close to the smaller PyTorch configuration on this machine.
+ONNX FP32 at 960 × 960 achieved 0.213 validation mAP50–95 at 22.2 ms mean prediction latency, compared with 0.169 at 22.9 ms for PyTorch FP32 at 640 × 640. The larger input improved accuracy while keeping the observed mean latency close to the smaller PyTorch configuration on this machine.
 
 [Results](docs/measurements/benchmarks.csv) · [Methodology](docs/METHODOLOGY.md) · [Reproduce](docs/REPRODUCE.md)
 
